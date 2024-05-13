@@ -50,7 +50,7 @@ export function useJettonContract() {
         }
 
         const dictCell = Cell.fromBase64(
-            'te6cckEBBQEAhgACA8/oAgEATUgBruZ9lci5NsOyp2Di7+yCGv2wJV23O6caiMcwMybpUQiO5rKAEAIBIAQDAE0gBCU7Sv6n2Y8FwqyxGlr/xE00CNYZmcjggL1cwNuq2IBiWWgvAEAATSAAb8WCRqh4WT43exJ4opN7a1Ad5yxCScehJ5uHV1Dv8PJZaC8AQFc/fkQ='
+            'te6cckEBBQEAhgACA8/oAgEATUgB6lWiebDHR7NfIs1J/Va0u8aVg5A1GC/8wAKwd52SPE6WWgvAEAIBIAQDAE0gBCU7Sv6n2Y8FwqyxGlr/xE00CNYZmcjggL1cwNuq2IBiWWgvAEAATSAAb8WCRqh4WT43exJ4opN7a1Ad5yxCScehJ5uHV1Dv8PJZaC8AQExd8mA='
         );
         const dict = dictCell.beginParse().loadDictDirect(Dictionary.Keys.BigUint(256), airdropEntryValue);
     
@@ -61,7 +61,7 @@ export function useJettonContract() {
         const helper = client.open(
             AirdropHelper.createFromConfig(
                 {
-                    airdrop: Address.parse('EQDOFZbowmKqGPftnAXkGYFdbXG0GIM20MjstZ1BunsX__hf'),
+                    airdrop: Address.parse('EQDH41-VorzDg0F0EcWrESaztyJnF2WfdZk4fu36m7UAJaLE'),
                     index: entryIndex,
                     proofHash: proof.hash(),
                 },
