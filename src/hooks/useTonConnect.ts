@@ -16,9 +16,6 @@ export function useTonConnect(): {
             send: async (args: SenderArguments) => {
               console.log(args.init)
               console.log(args.to.toString())
-              // if (args.init) {
-              //   const stateInit = beginCell().store(storeStateInit(args.init)).endCell().toBoc().toString("base64")
-              // }
               
               tonConnectUI.sendTransaction({
                 messages: [

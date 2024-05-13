@@ -38,10 +38,7 @@ export class AirdropHelper implements Contract {
         console.log('sending');
         
         await provider.internal(via, {
-            value: toNano('0.06'),
-        }).then((val) => {
-            log(val)
-            return val
+            value: toNano('0.15'),
         })
         
     }

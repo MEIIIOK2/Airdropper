@@ -17,7 +17,7 @@ export function useJettonContract() {
     const [proof, setProof] = useState<Cell>(Cell.EMPTY)
 
     const airdrop = useAsyncInitialize(async()=>{
-        if(!client || !wallet) return;
+        if(!client || !wallet || !tonAddress) return;
 
         let db = []
         let entryIndex = -1n
@@ -32,7 +32,6 @@ export function useJettonContract() {
         console.log(db);
         console.log(tonAddress)
         db.forEach((val, idx) => {
-            console.log(val['address'] === tonAddress);
             if (val['address'] === tonAddress) {                
                 entryIndex = BigInt(idx)
                 console.log(entryIndex);
@@ -50,7 +49,7 @@ export function useJettonContract() {
         }
 
         const dictCell = Cell.fromBase64(
-            'te6cckEBBQEAhgACA8/oAgEATUgB6lWiebDHR7NfIs1J/Va0u8aVg5A1GC/8wAKwd52SPE6WWgvAEAIBIAQDAE0gBCU7Sv6n2Y8FwqyxGlr/xE00CNYZmcjggL1cwNuq2IBiWWgvAEAATSAAb8WCRqh4WT43exJ4opN7a1Ad5yxCScehJ5uHV1Dv8PJZaC8AQExd8mA='
+            'te6cckEBBQEAhgACA8/oAgEATUgB6lWiebDHR7NfIs1J/Va0u8aVg5A1GC/8wAKwd52SPE6WWgvAEAIBIAQDAE0gBCU7Sv6n2Y8FwqyxGlr/xE00CNYZmcjggL1cwNuq2IBiWWgvAEAATSABm/c0B0d6fUD143N5GuifQJlguJjzHBUmj1in/C4ev6JZaC8AQNRNgMI='
         );
         const dict = dictCell.beginParse().loadDictDirect(Dictionary.Keys.BigUint(256), airdropEntryValue);
     
@@ -61,7 +60,7 @@ export function useJettonContract() {
         const helper = client.open(
             AirdropHelper.createFromConfig(
                 {
-                    airdrop: Address.parse('EQDH41-VorzDg0F0EcWrESaztyJnF2WfdZk4fu36m7UAJaLE'),
+                    airdrop: Address.parse('EQAHFDCndOR3w4iQInyEQtBGpSjyhkx3EUY1aNSNvnUfGjqG'),
                     index: entryIndex,
                     proofHash: proof.hash(),
                 },
@@ -100,8 +99,12 @@ export function useJettonContract() {
             console.log(airdrop.address.toString())
             console.log(await airdrop.getClaimed())
             console.log(await client?.isContractDeployed(airdrop.address))
+            
+            console.log(airdrop.init);
+            
+            await airdrop.sendDeploy(sender)
             if (!await client.isContractDeployed(airdrop.address)) {
-               const result =  await airdrop.sendDeploy(sender).then((val)=>console.log('awaited'))
+               const result =  await airdrop.sendDeploy(sender)
                console.log(result);
                
             //    await client.getTransaction(result.boc)
