@@ -18,6 +18,11 @@ export function useJettonContract() {
     const airdrop = useAsyncInitialize(async()=>{
         if(!client || !wallet) return;
 
+        fetch('https://raw.githubusercontent.com/MEIIIOK2/Airdropper/main/droptest.json')
+        .then((response=>response.json())).then((data)=>{
+            console.log(data)
+        })
+
         const dictCell = Cell.fromBase64(
             'te6cckEBAwEAWgACA8/4AgEATyAAb8WCRqh4WT43exJ4opN7a1Ad5yxCScehJ5uHV1Dv8PKFeLWLAEAATyABm/c0B0d6fUD143N5GuifQJlguJjzHBUmj1in/C4ev6KGK4XpAEDmutbe'
         );
