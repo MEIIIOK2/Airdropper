@@ -21,28 +21,29 @@ export class AirdropHelper implements Contract {
     constructor(readonly address: Address, readonly init?: { code: Cell; data: Cell }) {}
 
     static createFromAddress(address: Address) {
-        console.log('Creating AirdropHelper from address: ' + address.toString());
-        
         return new AirdropHelper(address);
     }
 
     static createFromConfig(config: AirdropHelperConfig, code: Cell, workchain = 0) {
-        console.log('Creating AirdropHelper from config: ' + config.airdrop.toString());
-        
         const data = airdropHelperConfigToCell(config);
         const init = { code, data };
         
         return new AirdropHelper(contractAddress(workchain, init), init);
     }
 
-    async sendDeploy(provider: ContractProvider, via: Sender) {
+    async sendDeploy(provider: ContractProvider, via: Sender): Promise<void> {
         console.log(provider);
         log(via)
         
+        console.log('sending');
         
         await provider.internal(via, {
-            value: toNano('0.15'),
-        });
+            value: toNano('0.06'),
+        }).then((val) => {
+            log(val)
+            return val
+        })
+        
     }
 
     async sendClaim(provider: ContractProvider, queryId: bigint, proof: Cell) {

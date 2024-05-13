@@ -11,7 +11,6 @@ export function useTonConnect(): {
 } {
     const [tonConnectUI] = useTonConnectUI()
     const wallet = useTonWallet()
-
     return {
         sender: {
             send: async (args: SenderArguments) => {

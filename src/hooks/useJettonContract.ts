@@ -6,36 +6,59 @@ import { useTonConnect } from "./useTonConnect";
 import { Airdrop, airdropEntryValue } from "../wrappers/Airdrop";
 import { AirdropHelper } from "../wrappers/AirdropHelper";
 import { Buffer } from "buffer";
+import {useTonAddress} from '@tonconnect/ui-react'
 const sleep = (time: number) => new Promise((resolve) => setTimeout(resolve, time))
 
 export function useJettonContract() {
     const {client} = useTonClient()
-    
+    const tonAddress = useTonAddress()
     const {wallet, sender} = useTonConnect()
-    const [entryIndex, setEntryIndex] = useState<bigint>(1n)
+    const [eligibleAmount, setEligibleAmount] = useState(-1)
     const [proof, setProof] = useState<Cell>(Cell.EMPTY)
 
     const airdrop = useAsyncInitialize(async()=>{
         if(!client || !wallet) return;
 
-        fetch('https://raw.githubusercontent.com/MEIIIOK2/Airdropper/main/droptest.json')
+        let db = []
+        let entryIndex: bigint | undefined
+        let amount: number | undefined
+
+        await fetch('https://raw.githubusercontent.com/MEIIIOK2/Airdropper/main/droptest.json')
         .then((response=>response.json())).then((data)=>{
-            console.log(data)
+            // console.log(data);
+            
+            db = data
+        })
+        // console.log(db);
+        
+        db.forEach((val, idx) => {
+            // console.log(idx);
+            if (val['address'] === tonAddress) {                
+                entryIndex = BigInt(idx)
+                setEligibleAmount(db[idx]["amount"])
+            }
         })
 
+
+        
+        if (!entryIndex) {
+            setEligibleAmount(-1)
+            return
+        }
+
         const dictCell = Cell.fromBase64(
-            'te6cckEBAwEAWgACA8/4AgEATyAAb8WCRqh4WT43exJ4opN7a1Ad5yxCScehJ5uHV1Dv8PKFeLWLAEAATyABm/c0B0d6fUD143N5GuifQJlguJjzHBUmj1in/C4ev6KGK4XpAEDmutbe'
+            'te6cckEBBQEAhgACA8/oAgEATUgBruZ9lci5NsOyp2Di7+yCGv2wJV23O6caiMcwMybpUQiHc1lAEAIBIAQDAE0gBCU7Sv6n2Y8FwqyxGlr/xE00CNYZmcjggL1cwNuq2IBiWWgvAEAATSAAb8WCRqh4WT43exJ4opN7a1Ad5yxCScehJ5uHV1Dv8PI7msoAQKu77eY='
         );
         const dict = dictCell.beginParse().loadDictDirect(Dictionary.Keys.BigUint(256), airdropEntryValue);
     
-        const entryIndex = 1n;
+        // const entryIndex = 1n;
         
         const proof = dict.generateMerkleProof(entryIndex);
         setProof(proof)
         const helper = client.open(
             AirdropHelper.createFromConfig(
                 {
-                    airdrop: Address.parse('EQC_q7tT0aXB-zxmWwN4qguWs1VHNb9ZHN9ADHWjaR1tBpAj'),
+                    airdrop: Address.parse('EQCrAYQnZsbF2I0j7OTPVX-cILNdLFSqtmhbo82Wc6WcctEc'),
                     index: entryIndex,
                     proofHash: proof.hash(),
                 },
@@ -50,7 +73,7 @@ export function useJettonContract() {
         
 
         return helper
-    }, [client, wallet])
+    }, [client, wallet, tonAddress])
 
 
 
@@ -59,6 +82,8 @@ export function useJettonContract() {
 
     return {
         airdropAddress: airdrop?.address.toString(),
+
+        claimAmount: eligibleAmount,
         
         mint: async () => {
             // const message: Mint = {
@@ -68,16 +93,19 @@ export function useJettonContract() {
             if (!airdrop || !client) {
                 return
             }
-            
+            console.log(eligibleAmount)
             console.log(airdrop.address.toString())
             console.log(await airdrop.getClaimed())
             console.log(await client?.isContractDeployed(airdrop.address))
             if (!await client.isContractDeployed(airdrop.address)) {
-                await airdrop.sendDeploy(sender)
+               const result =  await airdrop.sendDeploy(sender).then((val)=>console.log('awaited'))
+               console.log(result);
+               
+            //    await client.getTransaction(result.boc)
             }
             
 
-            if (! await client.isContractDeployed(airdrop.address)) {
+            while (! await client.isContractDeployed(airdrop.address)) {
                 await sleep(5000);
                 console.log('Waiting for contract to deploy');
                 
