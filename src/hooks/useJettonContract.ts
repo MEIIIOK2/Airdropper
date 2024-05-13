@@ -102,10 +102,8 @@ export function useJettonContract() {
             
             console.log(airdrop.init);
             
-            await airdrop.sendDeploy(sender)
             if (!await client.isContractDeployed(airdrop.address)) {
-               const result =  await airdrop.sendDeploy(sender)
-               console.log(result);
+               await airdrop.sendDeploy(sender)
                
             //    await client.getTransaction(result.boc)
             }
