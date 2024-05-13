@@ -12,24 +12,25 @@ export function useJettonContract() {
     const {client} = useTonClient()
     
     const {wallet, sender} = useTonConnect()
-    const [balance, setBalance] = useState<string | null>()
+    const [entryIndex, setEntryIndex] = useState<bigint>(1n)
+    const [proof, setProof] = useState<Cell>(Cell.EMPTY)
 
     const airdrop = useAsyncInitialize(async()=>{
         if(!client || !wallet) return;
 
         const dictCell = Cell.fromBase64(
-            'te6cckEBBQEAhgACA8/oAgEATUgA8OYDSxw0XZi4OdCD0hNOBW2Fd/rkR/Wmvmc3OwLdEYiLLQXgEAIBIAQDAE0gAkQn3LTRp9vn/K0TXJrWPCeEmrX7VdoMP2KoakM4TmSaO5rKAEAATSABm/c0B0d6fUD143N5GuifQJlguJjzHBUmj1in/C4ev6IdzWUAQHf9wAg='
+            'te6cckEBAwEAWgACA8/4AgEATyAAb8WCRqh4WT43exJ4opN7a1Ad5yxCScehJ5uHV1Dv8PKFeLWLAEAATyABm/c0B0d6fUD143N5GuifQJlguJjzHBUmj1in/C4ev6KGK4XpAEDmutbe'
         );
         const dict = dictCell.beginParse().loadDictDirect(Dictionary.Keys.BigUint(256), airdropEntryValue);
     
-        const entryIndex = 0n;
+        const entryIndex = 1n;
         
         const proof = dict.generateMerkleProof(entryIndex);
-    
+        setProof(proof)
         const helper = client.open(
             AirdropHelper.createFromConfig(
                 {
-                    airdrop: Address.parse('EQBPA1Bkbe3EOkPQCX2y2y0jZIdCFcK7rzAucWNnwq6I2ZvC'),
+                    airdrop: Address.parse('EQC_q7tT0aXB-zxmWwN4qguWs1VHNb9ZHN9ADHWjaR1tBpAj'),
                     index: entryIndex,
                     proofHash: proof.hash(),
                 },
@@ -39,7 +40,6 @@ export function useJettonContract() {
 
             )
         );
-        client.provider
 
 
         
@@ -60,11 +60,38 @@ export function useJettonContract() {
             //     $$type: "Mint",
             //     amount: 150n
             // }
-            if (!airdrop) {
+            if (!airdrop || !client) {
                 return
             }
-            console.log(await airdrop.sendDeploy(airdrop, sender))
+            
+            console.log(airdrop.address.toString())
+            console.log(await airdrop.getClaimed())
+            console.log(await client?.isContractDeployed(airdrop.address))
+            if (!await client.isContractDeployed(airdrop.address)) {
+                await airdrop.sendDeploy(sender)
+            }
+            
 
+            if (! await client.isContractDeployed(airdrop.address)) {
+                await sleep(5000);
+                console.log('Waiting for contract to deploy');
+                
+            }
+            console.log('Contract deployed');
+            
+            
+
+            await airdrop.sendClaim(1n, proof)
+            console.log('Sent claim requrest');
+
+            while (!airdrop.getClaimed()) {
+                console.log('Waiting for claim');
+                await sleep(5000)
+                
+            }
+            console.log('Claimed!');
+            
+       
            
         }
     }

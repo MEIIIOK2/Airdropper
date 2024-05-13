@@ -1,4 +1,4 @@
-import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Sender, toNano } from '@ton/core';
+import { Address, beginCell, Cell, Contract, contractAddress, ContractProvider, Sender, SendMode, toNano } from '@ton/core';
 import { AirdropEntry } from './Airdrop';
 import { log } from 'console';
 
@@ -46,7 +46,13 @@ export class AirdropHelper implements Contract {
     }
 
     async sendClaim(provider: ContractProvider, queryId: bigint, proof: Cell) {
-        await provider.external(beginCell().storeUint(queryId, 64).storeRef(proof).endCell());
+        // await provider.external(beginCell().storeUint(queryId, 64).storeRef(proof).endCell());
+        const messageBody = beginCell().storeUint(queryId,64).storeRef(proof).endCell();
+        await provider.external(messageBody);
+        // await provider.internal(via, {
+        //     value: toNano('0.15'),
+        //     body: messageBody,
+        // })
     }
 
     async getClaimed(provider: ContractProvider): Promise<boolean> {
