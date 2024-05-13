@@ -29,7 +29,7 @@ export function useJettonContract() {
             
             db = data
         })
-        // console.log(db);
+        console.log(db);
         
         db.forEach((val, idx) => {
             // console.log(idx);
