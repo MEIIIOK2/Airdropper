@@ -20,7 +20,7 @@ export function useJettonContract() {
         if(!client || !wallet) return;
 
         let db = []
-        let entryIndex: bigint | undefined
+        let entryIndex = -1n
         let amount: number | undefined
 
         await fetch('https://raw.githubusercontent.com/MEIIIOK2/Airdropper/main/droptest.json')
@@ -30,24 +30,27 @@ export function useJettonContract() {
             db = data
         })
         console.log(db);
-        
+        console.log(tonAddress)
         db.forEach((val, idx) => {
-            // console.log(idx);
+            console.log(val['address'] === tonAddress);
             if (val['address'] === tonAddress) {                
                 entryIndex = BigInt(idx)
+                console.log(entryIndex);
+                
                 setEligibleAmount(db[idx]["amount"])
             }
         })
 
 
+        console.log(entryIndex);
         
-        if (!entryIndex) {
+        if (entryIndex<0n) {
             setEligibleAmount(-1)
             return
         }
 
         const dictCell = Cell.fromBase64(
-            'te6cckEBBQEAhgACA8/oAgEATUgBruZ9lci5NsOyp2Di7+yCGv2wJV23O6caiMcwMybpUQiHc1lAEAIBIAQDAE0gBCU7Sv6n2Y8FwqyxGlr/xE00CNYZmcjggL1cwNuq2IBiWWgvAEAATSAAb8WCRqh4WT43exJ4opN7a1Ad5yxCScehJ5uHV1Dv8PI7msoAQKu77eY='
+            'te6cckEBBQEAhgACA8/oAgEATUgBruZ9lci5NsOyp2Di7+yCGv2wJV23O6caiMcwMybpUQiO5rKAEAIBIAQDAE0gBCU7Sv6n2Y8FwqyxGlr/xE00CNYZmcjggL1cwNuq2IBiWWgvAEAATSAAb8WCRqh4WT43exJ4opN7a1Ad5yxCScehJ5uHV1Dv8PJZaC8AQFc/fkQ='
         );
         const dict = dictCell.beginParse().loadDictDirect(Dictionary.Keys.BigUint(256), airdropEntryValue);
     
@@ -58,7 +61,7 @@ export function useJettonContract() {
         const helper = client.open(
             AirdropHelper.createFromConfig(
                 {
-                    airdrop: Address.parse('EQCrAYQnZsbF2I0j7OTPVX-cILNdLFSqtmhbo82Wc6WcctEc'),
+                    airdrop: Address.parse('EQDOFZbowmKqGPftnAXkGYFdbXG0GIM20MjstZ1BunsX__hf'),
                     index: entryIndex,
                     proofHash: proof.hash(),
                 },
