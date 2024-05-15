@@ -110,7 +110,7 @@ export function useJettonContract() {
         airdropAddress: airdrop?.address.toString(),
         claimed: claimed,
         claimAmount: eligibleAmount,
-        deploying: deploying
+        deploying: deploying,
         
         mint: async () => {
             // const message: Mint = {
