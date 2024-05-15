@@ -151,6 +151,7 @@ export function useJettonContract() {
                 await sleep(5000)
                 
             }
+            setClaimed(true)
             console.log('Claimed!');
             
        

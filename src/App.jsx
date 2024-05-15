@@ -15,7 +15,7 @@ function App() {
   console.log(claimAmount);
 
   console.log(!wallet.connected && (claimAmount < 0))
-  const canClaim = !wallet.connected || (claimAmount < 0)
+  const canClaim = wallet.connected && (claimAmount > 0)
   return (
     <>
     <TonConnectButton style={{position: 'fixed', right: '10px', top: '10px'}}/>
@@ -23,13 +23,7 @@ function App() {
       <h1>$TAPE Airdrop</h1>
     </div>
     <div className="card">
-      <h2>
-        { canClaim ? 
-        "Connect wallet to see your reward"
-        :
-        `You can claim ${claimAmount} $TAPE`}
-      </h2>
-      <AwaliableRewards canClaim = {canClaim} claimed = {claimed}/>
+      <AwaliableRewards canClaim = {canClaim} claimed = {claimed} claimAmount = {claimAmount}/>
        <br />
       <br />
       <button onClick={mint} disabled = {!wallet.connected}>
