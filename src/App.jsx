@@ -23,10 +23,10 @@ function App() {
       <h1>$TAPE Airdrop</h1>
     </div>
     <div className="card">
-      <AwaliableRewards canClaim = {canClaim} claimed = {claimed} claimAmount = {claimAmount}/>
+      <AwaliableRewards walletConnected = {wallet.connected}  claimed = {claimed} claimAmount = {claimAmount}/>
        <br />
       <br />
-      <button onClick={mint} disabled = {!wallet.connected || deploying}>
+      <button onClick={mint} disabled = {!wallet.connected || deploying || claimAmount < 0}>
         {wallet.connected ? "Claim" : "Connect Wallet to Mint"}
       </button>
       </div>
