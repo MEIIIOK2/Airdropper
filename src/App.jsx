@@ -10,7 +10,7 @@ import AwaliableRewards from './components/AwalRewards'
 import "@twa-dev/sdk"
 function App() {
   const wallet = useTonConnect()
-  const {airdropAddress, claimed, claimAmount, mint} = useJettonContract()
+  const {airdropAddress, claimed, claimAmount, mint, deploying} = useJettonContract()
   const userAddress = useTonAddress()
   console.log(claimAmount);
 
@@ -26,7 +26,7 @@ function App() {
       <AwaliableRewards canClaim = {canClaim} claimed = {claimed} claimAmount = {claimAmount}/>
        <br />
       <br />
-      <button onClick={mint} disabled = {!wallet.connected}>
+      <button onClick={mint} disabled = {!wallet.connected || deploying}>
         {wallet.connected ? "Claim" : "Connect Wallet to Mint"}
       </button>
       </div>
