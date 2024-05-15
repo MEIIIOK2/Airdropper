@@ -16,8 +16,15 @@ export function useJettonContract() {
     const [eligibleAmount, setEligibleAmount] = useState(-1)
     const [proof, setProof] = useState<Cell>(Cell.EMPTY)
 
+    const [stage, setStage] = useState(0)
+
+    const[claimed, setClaimed] = useState(false)
+
     const airdrop = useAsyncInitialize(async()=>{
         if(!client || !wallet || !tonAddress) return;
+
+
+        setStage(1)
 
         let db = []
         let entryIndex = -1n
@@ -59,6 +66,7 @@ export function useJettonContract() {
 
 
         console.log(entryIndex);
+        setStage(2)
         
         if (entryIndex<0n) {
             setEligibleAmount(-1)
@@ -85,11 +93,8 @@ export function useJettonContract() {
 
             )
         );
-
-        const air = await client.getBalance(Address.parse(contract_addr))
-        console.log(air);
         
-
+        setClaimed(await helper.getClaimed())
 
         
 
@@ -103,7 +108,7 @@ export function useJettonContract() {
 
     return {
         airdropAddress: airdrop?.address.toString(),
-
+        claimed: claimed,
         claimAmount: eligibleAmount,
         
         mint: async () => {
@@ -126,6 +131,7 @@ export function useJettonContract() {
                
             //    await client.getTransaction(result.boc)
             }
+            setStage
             
 
             while (! await client.isContractDeployed(airdrop.address)) {
