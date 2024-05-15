@@ -23,13 +23,30 @@ export function useJettonContract() {
         let entryIndex = -1n
         let amount: number | undefined
 
-        await fetch('https://raw.githubusercontent.com/MEIIIOK2/Airdropper/main/droptest.json')
+
+        let contract_addr: string = ''
+        let cell:string = ''
+
+        // https://raw.githubusercontent.com/MEIIIOK2/airdrop/main/data.json
+        // await fetch('https://raw.githubusercontent.com/MEIIIOK2/Airdropper/main/droptest.json')
+        // .then((response=>response.json())).then((data)=>{
+        //     // console.log(data);
+            
+        //     db = data
+        // })
+
+        await fetch('https://raw.githubusercontent.com/MEIIIOK2/airdrop/main/data.json')
         .then((response=>response.json())).then((data)=>{
             // console.log(data);
             
-            db = data
+            db = data.entries
+            cell = data.cell
+            contract_addr = data.address
+
         })
-        console.log(db);
+        console.log(db[0]);
+        console.log(contract_addr)
+
         console.log(tonAddress)
         db.forEach((val, idx) => {
             if (val['address'] === tonAddress) {                
@@ -48,9 +65,7 @@ export function useJettonContract() {
             return
         }
 
-        const dictCell = Cell.fromBase64(
-            'te6cckEBBQEAhgACA8/oAgEATUgB6lWiebDHR7NfIs1J/Va0u8aVg5A1GC/8wAKwd52SPE6WWgvAEAIBIAQDAE0gBCU7Sv6n2Y8FwqyxGlr/xE00CNYZmcjggL1cwNuq2IBiWWgvAEAATSAAb8WCRqh4WT43exJ4opN7a1Ad5yxCScehJ5uHV1Dv8PJZaC8AQExd8mA='
-        );
+        const dictCell = Cell.fromBase64(cell);
         const dict = dictCell.beginParse().loadDictDirect(Dictionary.Keys.BigUint(256), airdropEntryValue);
     
         // const entryIndex = 1n;
@@ -60,7 +75,7 @@ export function useJettonContract() {
         const helper = client.open(
             AirdropHelper.createFromConfig(
                 {
-                    airdrop: Address.parse('EQABcVpsNigIqhhGWPnXNE6hbe0_GV_yCBEqSfitAicUHvUc'),
+                    airdrop: Address.parse(contract_addr),
                     index: entryIndex,
                     proofHash: proof.hash(),
                 },
@@ -70,6 +85,10 @@ export function useJettonContract() {
 
             )
         );
+
+        const air = await client.getBalance(Address.parse(contract_addr))
+        console.log(air);
+        
 
 
         
