@@ -15,7 +15,7 @@ function AwaliableRewards(props) {
                 return (<h2>{`You can claim ${props.claimAmount} $TAPE`}</h2>)
             }
             else{
-                return (<h2>You are no eligible</h2>)
+                return (<h2>You are still not eligible</h2>)
             }
         }
         return(
