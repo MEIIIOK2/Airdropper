@@ -43,7 +43,7 @@ export function useJettonContract() {
         //     db = data
         // })
 
-        await fetch('https://raw.githubusercontent.com/MEIIIOK2/airdrop/main/data.json')
+        await fetch('https://raw.githubusercontent.com/MEIIIOK2/airdrop/second_drop/data.json')
         .then((response=>response.json())).then((data)=>{
             // console.log(data);
             
