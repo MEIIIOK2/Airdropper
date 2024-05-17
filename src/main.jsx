@@ -10,7 +10,8 @@ const manifestUrl =
 ReactDOM.createRoot(document.getElementById('root')).render(
   <React.StrictMode>
     <TonConnectUIProvider manifestUrl={manifestUrl}>
-      <App />
+      {/* <App /> */}
+      We will be back soon!
     </TonConnectUIProvider>
   </React.StrictMode>,
 )
